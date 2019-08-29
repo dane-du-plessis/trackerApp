@@ -5,6 +5,8 @@ import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import { Button } from 'react-native';
 import * as FileSystem from 'expo-file-system';
+import * as MailComposer from 'expo-mail-composer';
+
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -56,7 +58,7 @@ export default class App extends Component {
     })
     
     // const fileName = new Date(locationData[0].timestamp)
-    const fileName = Date(this.state.locationData[0].timestamp).split(' ').slice(0,6).join('_')
+    const fileName = Date(this.state.locationData[0].timestamp).split(' ').slice(0,6).join('_') + '.json'
     const fileUri = FileSystem.documentDirectory + 'LocationData/' + fileName
     
     await FileSystem.writeAsStringAsync(
@@ -80,7 +82,14 @@ export default class App extends Component {
 
     this.setState({locationData: []})
     
+    MailComposer.composeAsync({
+      recipients: ['daneasc@gmail.com'],
+      subject: 'TEST from EXPO MAILCOMPOSER',
+      body: 'Lorem ipsum lots of it',
+      attachments: [fileUri]
+    })
   }
+
 
   render() {
     let text = 'Waiting..';
@@ -108,21 +117,18 @@ export default class App extends Component {
           color="#00ff00"
           accessibilityLabel="This is a green button"
         />
+{/* 
+        <Button
+          disabled={this.state.locationData.length == 0}
+          onPress={this._emailData}
+          title="EMAIL"
+          color="#0000ff"
+          accessibilityLabel="This is a blue button"
+        /> */}
 
       </View>
     );
   }
-
-
-  // render() {
-  //   return (
-  //     <View style={styles.container}>
-  //       <Text style={styles.welcome}>Welcome to React Native!</Text>
-  //       <Text style={styles.instructions}>To get started, edit App.js</Text>
-  //       <Text style={styles.instructions}>{instructions}</Text>
-  //     </View>
-  //   );
-  // }
 }
 
 const styles = StyleSheet.create({
